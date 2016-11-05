@@ -1,20 +1,18 @@
 import cv2
-import sys
+import os,sys
 
 def getFace(imgPath, cPath):
-    imagePath = imgPath
-    cascPath = cPath
+
+    image = cv2.imread(imgPath)
     # Create the haar cascade
-    faceCascade = cv2.CascadeClassifier(cascPath)
+    faceCascade = cv2.CascadeClassifier(cPath)
     # Read the image
-    image = cv2.imread(imagePath)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # Detect faces in the image
     return faceCascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags = cv2.cv.CV_HAAR_SCALE_IMAGE)
     
-faces = getFace(sys.argv[0], sys.argv[1])
-print "Found {0} faces!".format(len(faces))
-
+faces = getFace(open("group-of-people-smiling-3794.jpg"), open("classifier.xml"))
+image = open("group-of-people-smiling-3794.jpg")
 # Draw a rectangle around the faces
 for (x, y, w, h) in faces:
     cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
