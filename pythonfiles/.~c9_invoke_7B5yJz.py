@@ -65,3 +65,4 @@ faceh = faces[3]
 #cv2.imshow("Faces found" ,image)
 #cv2.waitKey(0)
 print "Face:\n%s\nEyes:\n%s\nCenter Eyes:\n%s\nNose:\n%s\n"%(faces, eyes, center_eyes, nose)
+pyt
