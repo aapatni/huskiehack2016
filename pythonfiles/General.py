@@ -62,29 +62,34 @@ def findBridge(center_eye):
     bridge_y = (center_eye[0][1]+center_eye[1][1])/2
     return [bridge_x,bridge_y]
    
-def imgInfo(imgDir): 
-    faces = getFace(imgDir, "./faceclassifier.xml")
-    eyes = getEyes(imgDir, "./eyeclassifier.xml", faces)
-    image = open(imgDir)
-    center_eyes = findCenter(eyes)
-    bridge = findBridge(center_eyes)
-    nose = getNose(imgDir, "./noseclassifier2.xml", faces, eyes, bridge)
-    center_nose = findCenter([nose])[0]
-    eyedis = abs(math.sqrt(abs(center_eyes[1][0]-center_eyes[0][0])**2+abs(center_eyes[1][1]-center_eyes[0][1])**2))
-    left_eyewidth = (eyes[0][2]+eyes[0][3])/2.0
-    right_eyewidth = (eyes[1][2]+eyes[1][3])/2.0
-    noseheight = math.sqrt(abs(center_nose[0]-bridge[0])**2+abs(center_nose[1]-bridge[1])**2)
-    eyedis /= faces[2]
-    left_eyewidth /= faces[2]
-    right_eyewidth /= faces[2]
-    noseheight /= faces[3]
-    
-    print str(eyedis)+","+str(left_eyewidth)+","+str(right_eyewidth)+","+str(noseheight)
+def imgInfo(imgDiretory): 
+    eyedis = []
+    left_eyewidth = []
+    right_eyewidth = []
+    noseheight = []
+    for imgDir in imgDirectory:
+        faces = getFace(imgDir, "./faceclassifier.xml")
+        eyes = getEyes(imgDir, "./eyeclassifier.xml", faces)
+        image = open(imgDir)
+        center_eyes = findCenter(eyes)
+        bridge = findBridge(center_eyes)
+        nose = getNose(imgDir, "./noseclassifier2.xml", faces, eyes, bridge)
+        center_nose = findCenter([nose])[0]
+        eyedis.append(abs(math.sqrt(abs(center_eyes[1][0]-center_eyes[0][0])**2+abs(center_eyes[1][1]-center_eyes[0][1])**2))/faces[2])
+        left_eyewidth.append((eyes[0][2]+eyes[0][3])/2.0/faces[2])
+        right_eyewidth.append((eyes[1][2]+eyes[1][3])/2.0/faces[2])
+        noseheight.append(math.sqrt(abs(center_nose[0]-bridge[0])**2+abs(center_nose[1]-bridge[1])**2)/faces[3])
+        
+    ret1 = (eyedis[0]+eyedis[1]+eyedis[2]+eyedis[3]+eyedis[4])/5.0
+    ret2 = (left_eyewidth[0]+left_eyewidth[1]+left_eyewidth[2]+left_eyewidth[3]+left_eyewidth[4])/5
+    ret3 = (right_eyewidth[0]+right_eyewidth[1]+right_eyewidth[2]+right_eyewidth[3]+right_eyewidth[4])/5
+    ret4 = (noseheight[0]+noseheight[1]+noseheight[2]+noseheight[3]+noseheight[4])/5
+    print str(ret1)+","+str(ret2)+","+str(ret3)+","+str(ret4)
 
 #for (x, y
 #    cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 #cv2.imshow("Faces found" ,image)
 #cv2.waitKey(0)
-imgInfo("./adam4.jpg")
+imgInfo(sys.argv[1:6])
 
 #image = sys.stdin.read()
