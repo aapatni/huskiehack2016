@@ -23,21 +23,29 @@ def getEyes(imgPath, cPath, face):
     # Read the image
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     roi = gray[face[1]:face[1]+face[3], face[0]:face[0]+face[2]]
+    
+    left_roi = gray[face[1]: int(face[1]+(.6)*face[3]), face[0]:int(face[0]+(.5)*face[2])]
+    right_roi = gray[face[1]: int(face[1]+face[3]*(.6)), int(face[0]+(.5)*face[2]):int(face[0]+face[2])]
     # Detect faces in the image
-    teyes = eyeCascade.detectMultiScale(roi)
-    #teyes = teyes[0:2]
+    leyes = eyeCascade.detectMultiScale(left_roi)
+    leyes = leyes[0].tolist()
+    reyes = eyeCascade.detectMultiScale(right_roi)
+    reyes = reyes[0].tolist()
+    reyes[0] += int(face[2]*0.5)
+    
+    teyes = [leyes,reyes]
     return teyes
-def getNose(imgPath, cPath, face):
+def getNose(imgPath, cPath, face, eyes, bridge):
     image = cv2.imread(imgPath)
     
     # Create the haar cascade
     noseCascade = cv2.CascadeClassifier(cPath)
     # Read the image
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    roi = gray[face[1]:face[1]+face[3], face[0]:face[0]+face[2]]
+    roi = gray[eyes[0][0]: eyes[1][0], face[0]:face[0]+face[2]]
     # Detect faces in the image
-    tnose = noseCascade.detectMultiScale(roi)
-    return tnose
+    nose = noseCascade.detectMultiScale(roi)
+    return nose
     
 def findCenter(array):
     centers = []
@@ -46,22 +54,24 @@ def findCenter(array):
         y = int(i[1] + (.5)*(i[3]))
         centers.append([x,y])
     return centers
+    
 #finds the center between eyes. this is the bridge of nose position
-
-def findBridge(center_eyes):
-    bridge_x = center_eyes
+def findBridge(center_eye):
+    bridge_x = (center_eye[0][0] + center_eye[1][0])/2
+    bridge_y = (center_eye[0][1]+center_eye[1][1])/2
+    return [bridge_x,bridge_y]
+    
 faces = getFace("./picture.jpg", "./faceclassifier.xml")
 eyes = getEyes("./picture.jpg", "./eyeclassifier.xml", faces)
-nose = getNose("./picture.jpg", "./noseclassifier.xml", faces)
 image = open("./picture.jpg")
 center_eyes = findCenter(eyes)
-facex = faces[0]
-facey = faces[1]
-facew = faces[2]
-faceh = faces[3]
+bridge = findBridge(center_eyes)
+nose = getNose("./picture.jpg", "./noseclassifier.xml", faces, eyes, bridge)
+
 
 #for (x, y, w, h) in faces:
 #    cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 #cv2.imshow("Faces found" ,image)
 #cv2.waitKey(0)
-print "Face:\n%s\nEyes:\n%s\nCenter Eyes:\n%s\nNose:\n%s\n"%(faces, eyes, center_eyes, nose)
+print "Face:\n%s\nEyes:\n%s\nBridge:\n%s\nCenters:\n%s\nNose:\n%s\n"%(faces, eyes, bridge,center_eyes,nose)
+
