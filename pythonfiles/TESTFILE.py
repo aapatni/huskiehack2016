@@ -1,2 +1,3 @@
-total = sys.argv[0]
-print total
+import sys
+total = sys.argv
+print total[1]

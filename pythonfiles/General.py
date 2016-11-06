@@ -77,14 +77,14 @@ def imgInfo(imgDir):
     eyedis /= faces[2]
     left_eyewidth /= faces[2]
     right_eyewidth /= faces[2]
-    noseheight /= faces[2]
+    noseheight /= faces[3]
     
-    print eyedis,left_eyewidth,right_eyewidth,noseheight
+    print str(eyedis)+","+str(left_eyewidth)+","+str(right_eyewidth)+","+str(noseheight)
 
 #for (x, y
 #    cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 #cv2.imshow("Faces found" ,image)
 #cv2.waitKey(0)
-imgInfo("./rich5.jpg")
+imgInfo("./adam4.jpg")
 
 #image = sys.stdin.read()
